@@ -10,26 +10,32 @@
   .header { text-align: center; padding: 40px 20px 20px; }
   .header h1 { font-size: 36px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
   .header p { color: #8892b0; font-size: 14px; }
-  .last-update { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 30px; }
+  .last-update { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 20px; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+  .section-title { font-size: 18px; color: #00d4ff; margin: 30px 0 16px; padding-left: 8px; border-left: 3px solid #00d4ff; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
   .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s; }
   .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-  .market-flag { font-size: 32px; margin-bottom: 12px; }
-  .market-name { font-size: 14px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
-  .index-name { font-size: 20px; font-weight: 600; margin: 4px 0 16px; }
-  .price { font-size: 36px; font-weight: 700; font-family: "SF Mono", Monaco, monospace; }
+  .card.stock { border-color: rgba(0,212,255,0.2); }
+  .card.stock:hover { box-shadow: 0 20px 40px rgba(0,212,255,0.1); }
+  .market-flag { font-size: 32px; margin-bottom: 8px; }
+  .market-name { font-size: 13px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
+  .index-name { font-size: 20px; font-weight: 600; margin: 4px 0 14px; }
+  .ticker { font-size: 12px; color: #64748b; font-family: "SF Mono", Monaco, monospace; margin-top: -10px; margin-bottom: 10px; }
+  .price { font-size: 34px; font-weight: 700; font-family: "SF Mono", Monaco, monospace; }
+  .price.stock-price { font-size: 30px; }
   .change-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-  .change { font-size: 18px; font-weight: 600; font-family: "SF Mono", Monaco, monospace; }
-  .change-pct { font-size: 16px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .change { font-size: 17px; font-weight: 600; font-family: "SF Mono", Monaco, monospace; }
+  .change-pct { font-size: 15px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
   .up { color: #00e676; }
   .up-bg { background: rgba(0,230,118,0.15); color: #00e676; }
   .down { color: #ff5252; }
   .down-bg { background: rgba(255,82,82,0.15); color: #ff5252; }
   .loading { color: #64748b; font-style: italic; }
   .error { color: #ff5252; font-size: 14px; }
-  .chart-container { margin-top: 20px; height: 120px; position: relative; }
+  .chart-container { margin-top: 18px; height: 110px; position: relative; }
   .mini-chart { width: 100%; height: 100%; }
+  .sector-tag { display: inline-block; background: rgba(123,44,191,0.2); color: #b388ff; padding: 2px 10px; border-radius: 10px; font-size: 11px; margin-bottom: 10px; }
   .footer { text-align: center; padding: 30px; color: #475569; font-size: 12px; }
   .refresh-btn { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #7b2cbf); border: none; color: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,212,255,0.3); transition: transform 0.3s; }
   .refresh-btn:hover { transform: scale(1.1); }
@@ -37,7 +43,8 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (max-width: 768px) {
     .header h1 { font-size: 26px; }
-    .price { font-size: 28px; }
+    .price { font-size: 26px; }
+    .price.stock-price { font-size: 24px; }
     .card { padding: 20px; }
   }
 </style>
@@ -52,6 +59,9 @@
 <div class="last-update" id="lastUpdate">正在加载数据...</div>
 
 <div class="container">
+
+  <!-- 市场指数 -->
+  <div class="section-title">📊 市场指数</div>
   <div class="grid">
     <!-- KOSPI -->
     <div class="card">
@@ -113,6 +123,62 @@
       </div>
     </div>
   </div>
+
+  <!-- 半导体存储芯片 -->
+  <div class="section-title">💾 半导体 · 存储芯片</div>
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <!-- 三星电子 -->
+    <div class="card stock">
+      <div class="market-flag">🇰🇷</div>
+      <div class="market-name">Samsung Electronics</div>
+      <div class="index-name">三星电子</div>
+      <div class="ticker">005930.KS</div>
+      <div class="sector-tag">存储芯片 · 手机 · 代工</div>
+      <div class="price stock-price loading" id="samsung-price">--</div>
+      <div class="change-row" id="samsung-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="samsung-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- SK海力士 -->
+    <div class="card stock">
+      <div class="market-flag">🇰🇷</div>
+      <div class="market-name">SK Hynix</div>
+      <div class="index-name">SK 海力士</div>
+      <div class="ticker">000660.KS</div>
+      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
+      <div class="price stock-price loading" id="hynix-price">--</div>
+      <div class="change-row" id="hynix-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="hynix-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- 美光科技 -->
+    <div class="card stock">
+      <div class="market-flag">🇺🇸</div>
+      <div class="market-name">Micron Technology</div>
+      <div class="index-name">美光科技</div>
+      <div class="ticker">MU</div>
+      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
+      <div class="price stock-price loading" id="micron-price">--</div>
+      <div class="change-row" id="micron-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="micron-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="footer">
@@ -124,10 +190,15 @@
 <script>
 const PROXY_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 const SYMBOLS = {
-  kospi:   { symbol: '^KS11', name: 'KOSPI' },
-  sp500:   { symbol: '^GSPC', name: 'S&P 500' },
-  nasdaq:  { symbol: '^IXIC', name: 'NASDAQ' },
-  dow:     { symbol: '^DJI', name: 'Dow Jones' }
+  // 市场指数
+  kospi:   { symbol: '^KS11', name: 'KOSPI', type: 'index' },
+  sp500:   { symbol: '^GSPC', name: 'S&P 500', type: 'index' },
+  nasdaq:  { symbol: '^IXIC', name: 'NASDAQ', type: 'index' },
+  dow:     { symbol: '^DJI', name: 'Dow Jones', type: 'index' },
+  // 半导体个股
+  samsung: { symbol: '005930.KS', name: 'Samsung', type: 'stock' },
+  hynix:   { symbol: '000660.KS', name: 'SK Hynix', type: 'stock' },
+  micron:  { symbol: 'MU', name: 'Micron', type: 'stock' }
 };
 
 let chartData = {};
@@ -145,14 +216,12 @@ async function fetchStockData(key, { symbol }) {
     const result = data.chart.result[0];
     const meta = result.meta;
     const quotes = result.indicators.quote[0];
-    const timestamps = result.timestamp;
     
     const currentPrice = meta.regularMarketPrice || meta.previousClose;
     const prevClose = meta.chartPreviousClose || meta.previousClose;
     const change = currentPrice - prevClose;
     const changePct = (change / prevClose) * 100;
     
-    // Store chart data
     const prices = quotes.close.filter(p => p !== null);
     chartData[key] = prices;
     
@@ -166,7 +235,7 @@ async function fetchStockData(key, { symbol }) {
 function updateCard(key, data) {
   if (!data) {
     document.getElementById(`${key}-price`).textContent = '数据不可用';
-    document.getElementById(`${key}-price`).className = 'price error';
+    document.getElementById(`${key}-price`).className = document.getElementById(`${key}-price`).className.replace('loading', 'error');
     return;
   }
   
@@ -176,7 +245,7 @@ function updateCard(key, data) {
   
   const priceEl = document.getElementById(`${key}-price`);
   priceEl.textContent = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  priceEl.className = 'price';
+  priceEl.classList.remove('loading');
   
   const changeRow = document.getElementById(`${key}-change`);
   changeRow.innerHTML = `
@@ -184,12 +253,12 @@ function updateCard(key, data) {
     <span class="change-pct ${isUp ? 'up-bg' : 'down-bg'}">${sign}${changePct.toFixed(2)}%</span>
   `;
   
-  // Draw mini chart
   drawChart(`${key}-chart`, prices, isUp);
 }
 
 function drawChart(canvasId, prices, isUp) {
   const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width * 2;
@@ -222,7 +291,6 @@ function drawChart(canvasId, prices, isUp) {
   });
   ctx.stroke();
   
-  // Gradient fill
   ctx.lineTo(w, h);
   ctx.lineTo(0, h);
   ctx.closePath();
@@ -253,17 +321,13 @@ async function fetchAllData() {
   btn.classList.remove('spinning');
 }
 
-// Initial load
 fetchAllData();
-
-// Auto refresh every 30 seconds
 setInterval(fetchAllData, 30000);
 
-// Redraw charts on resize
 window.addEventListener('resize', () => {
   Object.entries(chartData).forEach(([key, prices]) => {
     const changeEl = document.getElementById(`${key}-change`);
-    const isUp = changeEl.querySelector('.change')?.classList.contains('up') ?? true;
+    const isUp = changeEl?.querySelector('.change')?.classList.contains('up') ?? true;
     drawChart(`${key}-chart`, prices, isUp);
   });
 });
