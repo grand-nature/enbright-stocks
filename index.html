@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enbright - 全球股市实时监测</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; color: #fff; }
+  .header { text-align: center; padding: 40px 20px 20px; }
+  .header h1 { font-size: 36px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .header p { color: #8892b0; font-size: 14px; }
+  .last-update { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 30px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+  .market-flag { font-size: 32px; margin-bottom: 12px; }
+  .market-name { font-size: 14px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
+  .index-name { font-size: 20px; font-weight: 600; margin: 4px 0 16px; }
+  .price { font-size: 36px; font-weight: 700; font-family: "SF Mono", Monaco, monospace; }
+  .change-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  .change { font-size: 18px; font-weight: 600; font-family: "SF Mono", Monaco, monospace; }
+  .change-pct { font-size: 16px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .up { color: #00e676; }
+  .up-bg { background: rgba(0,230,118,0.15); color: #00e676; }
+  .down { color: #ff5252; }
+  .down-bg { background: rgba(255,82,82,0.15); color: #ff5252; }
+  .loading { color: #64748b; font-style: italic; }
+  .error { color: #ff5252; font-size: 14px; }
+  .chart-container { margin-top: 20px; height: 120px; position: relative; }
+  .mini-chart { width: 100%; height: 100%; }
+  .footer { text-align: center; padding: 30px; color: #475569; font-size: 12px; }
+  .refresh-btn { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #7b2cbf); border: none; color: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,212,255,0.3); transition: transform 0.3s; }
+  .refresh-btn:hover { transform: scale(1.1); }
+  .refresh-btn.spinning { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 768px) {
+    .header h1 { font-size: 26px; }
+    .price { font-size: 28px; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Enbright</h1>
+  <p>全球股市实时监测 · 韩国 & 美国</p>
+</div>
+
+<div class="last-update" id="lastUpdate">正在加载数据...</div>
+
+<div class="container">
+  <div class="grid">
+    <!-- KOSPI -->
+    <div class="card">
+      <div class="market-flag">🇰🇷</div>
+      <div class="market-name">South Korea</div>
+      <div class="index-name">KOSPI 综合指数</div>
+      <div class="price loading" id="kospi-price">--</div>
+      <div class="change-row" id="kospi-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="kospi-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- S&P 500 -->
+    <div class="card">
+      <div class="market-flag">🇺🇸</div>
+      <div class="market-name">United States</div>
+      <div class="index-name">S&P 500</div>
+      <div class="price loading" id="sp500-price">--</div>
+      <div class="change-row" id="sp500-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="sp500-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Nasdaq -->
+    <div class="card">
+      <div class="market-flag">🇺🇸</div>
+      <div class="market-name">United States</div>
+      <div class="index-name">纳斯达克综合</div>
+      <div class="price loading" id="nasdaq-price">--</div>
+      <div class="change-row" id="nasdaq-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="nasdaq-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Dow Jones -->
+    <div class="card">
+      <div class="market-flag">🇺🇸</div>
+      <div class="market-name">United States</div>
+      <div class="index-name">道琼斯工业</div>
+      <div class="price loading" id="dow-price">--</div>
+      <div class="change-row" id="dow-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="dow-chart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  数据仅供参考 · 30秒自动刷新 · Enbright Market Monitor
+</div>
+
+<button class="refresh-btn" id="refreshBtn" onclick="fetchAllData()">🔄</button>
+
+<script>
+const PROXY_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+const SYMBOLS = {
+  kospi:   { symbol: '^KS11', name: 'KOSPI' },
+  sp500:   { symbol: '^GSPC', name: 'S&P 500' },
+  nasdaq:  { symbol: '^IXIC', name: 'NASDAQ' },
+  dow:     { symbol: '^DJI', name: 'Dow Jones' }
+};
+
+let chartData = {};
+
+async function fetchStockData(key, { symbol }) {
+  try {
+    const url = `${PROXY_URL}${symbol}?interval=5m&range=1d`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+      throw new Error('No data');
+    }
+    
+    const result = data.chart.result[0];
+    const meta = result.meta;
+    const quotes = result.indicators.quote[0];
+    const timestamps = result.timestamp;
+    
+    const currentPrice = meta.regularMarketPrice || meta.previousClose;
+    const prevClose = meta.chartPreviousClose || meta.previousClose;
+    const change = currentPrice - prevClose;
+    const changePct = (change / prevClose) * 100;
+    
+    // Store chart data
+    const prices = quotes.close.filter(p => p !== null);
+    chartData[key] = prices;
+    
+    return { currentPrice, change, changePct, prices };
+  } catch (e) {
+    console.error(`Error fetching ${symbol}:`, e);
+    return null;
+  }
+}
+
+function updateCard(key, data) {
+  if (!data) {
+    document.getElementById(`${key}-price`).textContent = '数据不可用';
+    document.getElementById(`${key}-price`).className = 'price error';
+    return;
+  }
+  
+  const { currentPrice, change, changePct, prices } = data;
+  const isUp = change >= 0;
+  const sign = isUp ? '+' : '';
+  
+  const priceEl = document.getElementById(`${key}-price`);
+  priceEl.textContent = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  priceEl.className = 'price';
+  
+  const changeRow = document.getElementById(`${key}-change`);
+  changeRow.innerHTML = `
+    <span class="change ${isUp ? 'up' : 'down'}">${sign}${change.toFixed(2)}</span>
+    <span class="change-pct ${isUp ? 'up-bg' : 'down-bg'}">${sign}${changePct.toFixed(2)}%</span>
+  `;
+  
+  // Draw mini chart
+  drawChart(`${key}-chart`, prices, isUp);
+}
+
+function drawChart(canvasId, prices, isUp) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * 2;
+  canvas.height = rect.height * 2;
+  ctx.scale(2, 2);
+  
+  const w = rect.width;
+  const h = rect.height;
+  const padding = 4;
+  
+  ctx.clearRect(0, 0, w, h);
+  
+  if (!prices || prices.length < 2) return;
+  
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+  
+  const color = isUp ? '#00e676' : '#ff5252';
+  
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  
+  prices.forEach((price, i) => {
+    const x = (i / (prices.length - 1)) * w;
+    const y = h - padding - ((price - min) / range) * (h - padding * 2);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  
+  // Gradient fill
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  const gradient = ctx.createLinearGradient(0, 0, 0, h);
+  gradient.addColorStop(0, isUp ? 'rgba(0,230,118,0.2)' : 'rgba(255,82,82,0.2)');
+  gradient.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+async function fetchAllData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  
+  const results = await Promise.all(
+    Object.entries(SYMBOLS).map(async ([key, config]) => {
+      const data = await fetchStockData(key, config);
+      return { key, data };
+    })
+  );
+  
+  results.forEach(({ key, data }) => updateCard(key, data));
+  
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent = 
+    `最后更新：${now.toLocaleString('zh-CN')}`;
+  
+  btn.classList.remove('spinning');
+}
+
+// Initial load
+fetchAllData();
+
+// Auto refresh every 30 seconds
+setInterval(fetchAllData, 30000);
+
+// Redraw charts on resize
+window.addEventListener('resize', () => {
+  Object.entries(chartData).forEach(([key, prices]) => {
+    const changeEl = document.getElementById(`${key}-change`);
+    const isUp = changeEl.querySelector('.change')?.classList.contains('up') ?? true;
+    drawChart(`${key}-chart`, prices, isUp);
+  });
+});
+</script>
+
+</body>
+</html>
