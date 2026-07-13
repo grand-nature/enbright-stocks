@@ -12,22 +12,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch Samsung
-        run: |
-          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/005930.KS?interval=5m&range=1d" \
-            -H "User-Agent: Mozilla/5.0" > data/samsung.json
-      - name: Fetch SK Hynix
-        run: |
-          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/000660.KS?interval=5m&range=1d" \
-            -H "User-Agent: Mozilla/5.0" > data/hynix.json
-      - name: Fetch Micron
-        run: |
-          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/MU?interval=5m&range=1d" \
-            -H "User-Agent: Mozilla/5.0" > data/micron.json
       - name: Fetch KOSPI
         run: |
           curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=5m&range=1d" \
             -H "User-Agent: Mozilla/5.0" > data/kospi.json
+      - name: Fetch Nikkei 225
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/nikkei.json
       - name: Fetch S&P 500
         run: |
           curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=5m&range=1d" \
@@ -40,11 +32,31 @@ jobs:
         run: |
           curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?interval=5m&range=1d" \
             -H "User-Agent: Mozilla/5.0" > data/dow.json
+      - name: Fetch Samsung
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/005930.KS?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/samsung.json
+      - name: Fetch SK Hynix
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/000660.KS?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/hynix.json
+      - name: Fetch Micron
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/MU?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/micron.json
+      - name: Fetch Tokyo Electron
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/8035.T?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/tokyoelec.json
+      - name: Fetch Sony
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/6758.T?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/sony.json
       - name: Build stocks.json
         run: |
           echo '{"updatedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","data":{' > data/stocks.json
           first=true
-          for file in kospi sp500 nasdaq dow samsung hynix micron; do
+          for file in kospi nikkei sp500 nasdaq dow samsung hynix micron tokyoelec sony; do
             if [ "$first" = true ]; then first=false; else echo ',' >> data/stocks.json; fi
             echo -n '"'$file'":' >> data/stocks.json
             cat data/$file.json >> data/stocks.json

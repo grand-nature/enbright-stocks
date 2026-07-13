@@ -51,7 +51,7 @@
 
 <div class="header">
   <h1>Enbright</h1>
-  <p>全球股市实时监测 · 韩国 & 美国</p>
+  <p>全球股市实时监测 · 韩国 & 美国 & 日本</p>
 </div>
 
 <div class="last-update" id="lastUpdate">正在加载数据...</div>
@@ -71,6 +71,20 @@
       </div>
       <div class="chart-container">
         <canvas class="mini-chart" id="kospi-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="market-flag">🇯🇵</div>
+      <div class="market-name">Japan</div>
+      <div class="index-name">日经 225</div>
+      <div class="price loading" id="nikkei-price">--</div>
+      <div class="change-row" id="nikkei-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="nikkei-chart"></canvas>
       </div>
     </div>
 
@@ -166,6 +180,38 @@
         <canvas class="mini-chart" id="micron-chart"></canvas>
       </div>
     </div>
+
+    <div class="card">
+      <div class="market-flag">🇯🇵</div>
+      <div class="market-name">Tokyo Electron</div>
+      <div class="index-name">东京电子</div>
+      <div class="ticker">8035.T</div>
+      <div class="sector-tag">半导体设备 · 刻蚀 · 沉积</div>
+      <div class="price stock-price loading" id="tokyoelec-price">--</div>
+      <div class="change-row" id="tokyoelec-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="tokyoelec-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="market-flag">🇯🇵</div>
+      <div class="market-name">Sony Group</div>
+      <div class="index-name">索尼</div>
+      <div class="ticker">6758.T</div>
+      <div class="sector-tag">电子 · 游戏 · 半导体</div>
+      <div class="price stock-price loading" id="sony-price">--</div>
+      <div class="change-row" id="sony-change">
+        <span class="change">--</span>
+        <span class="change-pct">--</span>
+      </div>
+      <div class="chart-container">
+        <canvas class="mini-chart" id="sony-chart"></canvas>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -179,13 +225,16 @@
 <script>
 const DATA_URL = 'https://www.enbright.uk/data/stocks.json';
 const STOCK_SYMBOLS = {
-  kospi:   { name: 'KOSPI', type: 'index' },
-  sp500:   { name: 'S&P 500', type: 'index' },
-  nasdaq:  { name: 'NASDAQ', type: 'index' },
-  dow:     { name: 'Dow Jones', type: 'index' },
-  samsung: { name: 'Samsung', type: 'stock' },
-  hynix:   { name: 'SK Hynix', type: 'stock' },
-  micron:  { name: 'Micron', type: 'stock' }
+  kospi:     { name: 'KOSPI', type: 'index' },
+  nikkei:    { name: 'Nikkei 225', type: 'index' },
+  sp500:     { name: 'S&P 500', type: 'index' },
+  nasdaq:    { name: 'NASDAQ', type: 'index' },
+  dow:       { name: 'Dow Jones', type: 'index' },
+  samsung:   { name: 'Samsung', type: 'stock' },
+  hynix:     { name: 'SK Hynix', type: 'stock' },
+  micron:    { name: 'Micron', type: 'stock' },
+  tokyoelec: { name: 'Tokyo Electron', type: 'stock' },
+  sony:      { name: 'Sony', type: 'stock' }
 };
 
 let chartData = {};
