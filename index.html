@@ -6,46 +6,72 @@
 <title>Enbright - 全球股市实时监测</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; color: #fff; }
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; 
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); 
+    min-height: 100vh; 
+    color: #fff; 
+    padding-bottom: 40px;
+  }
   .header { text-align: center; padding: 40px 20px 20px; }
-  .header h1 { font-size: 36px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .header h1 { 
+    font-size: 36px; 
+    font-weight: 700; 
+    background: linear-gradient(90deg, #00d4ff, #7b2cbf); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    margin-bottom: 8px; 
+  }
   .header p { color: #8892b0; font-size: 14px; }
-  .last-update { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 20px; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
-  .section-title { font-size: 18px; color: #00d4ff; margin: 30px 0 16px; padding-left: 8px; border-left: 3px solid #00d4ff; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-  .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-  .card.stock { border-color: rgba(0,212,255,0.2); }
-  .card.stock:hover { box-shadow: 0 20px 40px rgba(0,212,255,0.1); }
-  .market-flag { font-size: 32px; margin-bottom: 8px; }
-  .market-name { font-size: 13px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
-  .index-name { font-size: 20px; font-weight: 600; margin: 4px 0 14px; }
-  .ticker { font-size: 12px; color: #64748b; font-family: "SF Mono", Monaco, monospace; margin-top: -10px; margin-bottom: 10px; }
-  .price { font-size: 34px; font-weight: 700; font-family: "SF Mono", Monaco, monospace; }
-  .price.stock-price { font-size: 30px; }
-  .change-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-  .change { font-size: 17px; font-weight: 600; font-family: "SF Mono", Monaco, monospace; }
-  .change-pct { font-size: 15px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
-  .up { color: #00e676; }
-  .up-bg { background: rgba(0,230,118,0.15); color: #00e676; }
-  .down { color: #ff5252; }
-  .down-bg { background: rgba(255,82,82,0.15); color: #ff5252; }
-  .loading { color: #64748b; font-style: italic; }
-  .error { color: #ff5252; font-size: 14px; }
-  .chart-container { margin-top: 18px; height: 110px; position: relative; }
-  .mini-chart { width: 100%; height: 100%; }
-  .sector-tag { display: inline-block; background: rgba(123,44,191,0.2); color: #b388ff; padding: 2px 10px; border-radius: 10px; font-size: 11px; margin-bottom: 10px; }
-  .footer { text-align: center; padding: 30px; color: #475569; font-size: 12px; }
-  .refresh-btn { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #7b2cbf); border: none; color: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,212,255,0.3); transition: transform 0.3s; }
-  .refresh-btn:hover { transform: scale(1.1); }
-  .refresh-btn.spinning { animation: spin 1s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .section-title { 
+    font-size: 18px; 
+    color: #00d4ff; 
+    margin: 30px 0 16px; 
+    padding-left: 8px; 
+    border-left: 3px solid #00d4ff; 
+  }
+  .grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 20px; 
+  }
+  .card { 
+    background: rgba(255,255,255,0.05); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 20px; 
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s; 
+    height: 400px;
+  }
+  .card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+  }
+  .card-header {
+    padding: 20px 24px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .market-flag { font-size: 28px; }
+  .market-info { flex: 1; }
+  .market-name { font-size: 12px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
+  .index-name { font-size: 18px; font-weight: 600; margin-top: 2px; }
+  .ticker { font-size: 11px; color: #64748b; font-family: "SF Mono", monospace; }
+  .widget-container { height: 310px; width: 100%; }
+  .footer { 
+    text-align: center; 
+    padding: 40px 20px; 
+    color: #475569; 
+    font-size: 12px; 
+  }
   @media (max-width: 768px) {
     .header h1 { font-size: 26px; }
-    .price { font-size: 26px; }
-    .price.stock-price { font-size: 24px; }
-    .card { padding: 20px; }
+    .card { height: 360px; }
+    .widget-container { height: 270px; }
   }
 </style>
 </head>
@@ -56,8 +82,6 @@
   <p>全球股市实时监测 · 韩国 & 美国</p>
 </div>
 
-<div class="last-update" id="lastUpdate">正在加载数据...</div>
-
 <div class="container">
 
   <!-- 市场指数 -->
@@ -65,272 +89,158 @@
   <div class="grid">
     <!-- KOSPI -->
     <div class="card">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">South Korea</div>
-      <div class="index-name">KOSPI 综合指数</div>
-      <div class="price loading" id="kospi-price">--</div>
-      <div class="change-row" id="kospi-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+      <div class="card-header">
+        <div class="market-flag">🇰🇷</div>
+        <div class="market-info">
+          <div class="market-name">South Korea</div>
+          <div class="index-name">KOSPI 综合指数</div>
+          <div class="ticker">INDEX: KOSPI</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="kospi-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-kospi"></div>
     </div>
 
     <!-- S&P 500 -->
     <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">S&P 500</div>
-      <div class="price loading" id="sp500-price">--</div>
-      <div class="change-row" id="sp500-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+      <div class="card-header">
+        <div class="market-flag">🇺🇸</div>
+        <div class="market-info">
+          <div class="market-name">United States</div>
+          <div class="index-name">S&P 500</div>
+          <div class="ticker">AMEX: SPY</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="sp500-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-sp500"></div>
     </div>
 
     <!-- Nasdaq -->
     <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">纳斯达克综合</div>
-      <div class="price loading" id="nasdaq-price">--</div>
-      <div class="change-row" id="nasdaq-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+      <div class="card-header">
+        <div class="market-flag">🇺🇸</div>
+        <div class="market-info">
+          <div class="market-name">United States</div>
+          <div class="index-name">纳斯达克 100</div>
+          <div class="ticker">NASDAQ: QQQ</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="nasdaq-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-nasdaq"></div>
     </div>
 
     <!-- Dow Jones -->
     <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">道琼斯工业</div>
-      <div class="price loading" id="dow-price">--</div>
-      <div class="change-row" id="dow-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+      <div class="card-header">
+        <div class="market-flag">🇺🇸</div>
+        <div class="market-info">
+          <div class="market-name">United States</div>
+          <div class="index-name">道琼斯工业</div>
+          <div class="ticker">AMEX: DIA</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="dow-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-dow"></div>
     </div>
   </div>
 
   <!-- 半导体存储芯片 -->
   <div class="section-title">💾 半导体 · 存储芯片</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
     <!-- 三星电子 -->
-    <div class="card stock">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">Samsung Electronics</div>
-      <div class="index-name">三星电子</div>
-      <div class="ticker">005930.KS</div>
-      <div class="sector-tag">存储芯片 · 手机 · 代工</div>
-      <div class="price stock-price loading" id="samsung-price">--</div>
-      <div class="change-row" id="samsung-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+    <div class="card">
+      <div class="card-header">
+        <div class="market-flag">🇰🇷</div>
+        <div class="market-info">
+          <div class="market-name">Samsung Electronics</div>
+          <div class="index-name">三星电子</div>
+          <div class="ticker">KRX: 005930</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="samsung-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-samsung"></div>
     </div>
 
     <!-- SK海力士 -->
-    <div class="card stock">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">SK Hynix</div>
-      <div class="index-name">SK 海力士</div>
-      <div class="ticker">000660.KS</div>
-      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
-      <div class="price stock-price loading" id="hynix-price">--</div>
-      <div class="change-row" id="hynix-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+    <div class="card">
+      <div class="card-header">
+        <div class="market-flag">🇰🇷</div>
+        <div class="market-info">
+          <div class="market-name">SK Hynix</div>
+          <div class="index-name">SK 海力士</div>
+          <div class="ticker">KRX: 000660</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="hynix-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-hynix"></div>
     </div>
 
     <!-- 美光科技 -->
-    <div class="card stock">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">Micron Technology</div>
-      <div class="index-name">美光科技</div>
-      <div class="ticker">MU</div>
-      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
-      <div class="price stock-price loading" id="micron-price">--</div>
-      <div class="change-row" id="micron-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
+    <div class="card">
+      <div class="card-header">
+        <div class="market-flag">🇺🇸</div>
+        <div class="market-info">
+          <div class="market-name">Micron Technology</div>
+          <div class="index-name">美光科技</div>
+          <div class="ticker">NASDAQ: MU</div>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="micron-chart"></canvas>
-      </div>
+      <div class="widget-container" id="tv-micron"></div>
     </div>
   </div>
 
 </div>
 
 <div class="footer">
-  数据仅供参考 · 30秒自动刷新 · Enbright Market Monitor
+  数据由 TradingView 提供 · 实时更新 · Enbright Market Monitor
 </div>
 
-<button class="refresh-btn" id="refreshBtn" onclick="fetchAllData()">🔄</button>
-
 <script>
-const PROXY_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/';
-const SYMBOLS = {
-  // 市场指数
-  kospi:   { symbol: '^KS11', name: 'KOSPI', type: 'index' },
-  sp500:   { symbol: '^GSPC', name: 'S&P 500', type: 'index' },
-  nasdaq:  { symbol: '^IXIC', name: 'NASDAQ', type: 'index' },
-  dow:     { symbol: '^DJI', name: 'Dow Jones', type: 'index' },
-  // 半导体个股
-  samsung: { symbol: '005930.KS', name: 'Samsung', type: 'stock' },
-  hynix:   { symbol: '000660.KS', name: 'SK Hynix', type: 'stock' },
-  micron:  { symbol: 'MU', name: 'Micron', type: 'stock' }
-};
-
-let chartData = {};
-
-async function fetchStockData(key, { symbol }) {
-  try {
-    const url = `${PROXY_URL}${symbol}?interval=5m&range=1d`;
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
-      throw new Error('No data');
-    }
-    
-    const result = data.chart.result[0];
-    const meta = result.meta;
-    const quotes = result.indicators.quote[0];
-    
-    const currentPrice = meta.regularMarketPrice || meta.previousClose;
-    const prevClose = meta.chartPreviousClose || meta.previousClose;
-    const change = currentPrice - prevClose;
-    const changePct = (change / prevClose) * 100;
-    
-    const prices = quotes.close.filter(p => p !== null);
-    chartData[key] = prices;
-    
-    return { currentPrice, change, changePct, prices };
-  } catch (e) {
-    console.error(`Error fetching ${symbol}:`, e);
-    return null;
-  }
-}
-
-function updateCard(key, data) {
-  if (!data) {
-    document.getElementById(`${key}-price`).textContent = '数据不可用';
-    document.getElementById(`${key}-price`).className = document.getElementById(`${key}-price`).className.replace('loading', 'error');
-    return;
-  }
+function createWidget(containerId, symbol, color) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
   
-  const { currentPrice, change, changePct, prices } = data;
-  const isUp = change >= 0;
-  const sign = isUp ? '+' : '';
+  const widgetDiv = document.createElement('div');
+  widgetDiv.className = 'tradingview-widget-container';
+  widgetDiv.style.height = '100%';
+  widgetDiv.style.width = '100%';
   
-  const priceEl = document.getElementById(`${key}-price`);
-  priceEl.textContent = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  priceEl.classList.remove('loading');
+  const innerDiv = document.createElement('div');
+  innerDiv.className = 'tradingview-widget-container__widget';
+  innerDiv.style.height = '100%';
+  innerDiv.style.width = '100%';
+  widgetDiv.appendChild(innerDiv);
   
-  const changeRow = document.getElementById(`${key}-change`);
-  changeRow.innerHTML = `
-    <span class="change ${isUp ? 'up' : 'down'}">${sign}${change.toFixed(2)}</span>
-    <span class="change-pct ${isUp ? 'up-bg' : 'down-bg'}">${sign}${changePct.toFixed(2)}%</span>
-  `;
-  
-  drawChart(`${key}-chart`, prices, isUp);
-}
-
-function drawChart(canvasId, prices, isUp) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * 2;
-  canvas.height = rect.height * 2;
-  ctx.scale(2, 2);
-  
-  const w = rect.width;
-  const h = rect.height;
-  const padding = 4;
-  
-  ctx.clearRect(0, 0, w, h);
-  
-  if (!prices || prices.length < 2) return;
-  
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const range = max - min || 1;
-  
-  const color = isUp ? '#00e676' : '#ff5252';
-  
-  ctx.beginPath();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  
-  prices.forEach((price, i) => {
-    const x = (i / (prices.length - 1)) * w;
-    const y = h - padding - ((price - min) / range) * (h - padding * 2);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+  script.async = true;
+  script.textContent = JSON.stringify({
+    "symbol": symbol,
+    "width": "100%",
+    "height": "100%",
+    "locale": "zh_CN",
+    "dateRange": "1D",
+    "colorTheme": "dark",
+    "trendLineColor": color,
+    "underLineColor": color.replace('1)', '0.15)'),
+    "underLineBottomColor": color.replace('1)', '0)'),
+    "isTransparent": true,
+    "autosize": true,
+    "chartOnly": false
   });
-  ctx.stroke();
   
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  const gradient = ctx.createLinearGradient(0, 0, 0, h);
-  gradient.addColorStop(0, isUp ? 'rgba(0,230,118,0.2)' : 'rgba(255,82,82,0.2)');
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fill();
+  widgetDiv.appendChild(script);
+  container.appendChild(widgetDiv);
 }
 
-async function fetchAllData() {
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  
-  const results = await Promise.all(
-    Object.entries(SYMBOLS).map(async ([key, config]) => {
-      const data = await fetchStockData(key, config);
-      return { key, data };
-    })
-  );
-  
-  results.forEach(({ key, data }) => updateCard(key, data));
-  
-  const now = new Date();
-  document.getElementById('lastUpdate').textContent = 
-    `最后更新：${now.toLocaleString('zh-CN')}`;
-  
-  btn.classList.remove('spinning');
-}
+// 青蓝色主色调
+const mainColor = "rgba(0, 212, 255, 1)";
 
-fetchAllData();
-setInterval(fetchAllData, 30000);
+// 市场指数
+setTimeout(() => createWidget('tv-kospi',   'KRX:KOSPI',  mainColor), 100);
+setTimeout(() => createWidget('tv-sp500',   'AMEX:SPY',   mainColor), 400);
+setTimeout(() => createWidget('tv-nasdaq',  'NASDAQ:QQQ', mainColor), 700);
+setTimeout(() => createWidget('tv-dow',     'AMEX:DIA',   mainColor), 1000);
 
-window.addEventListener('resize', () => {
-  Object.entries(chartData).forEach(([key, prices]) => {
-    const changeEl = document.getElementById(`${key}-change`);
-    const isUp = changeEl?.querySelector('.change')?.classList.contains('up') ?? true;
-    drawChart(`${key}-chart`, prices, isUp);
-  });
-});
+// 半导体个股（错开加载避免同时请求）
+setTimeout(() => createWidget('tv-samsung', 'KRX:005930', mainColor), 1400);
+setTimeout(() => createWidget('tv-hynix',   'KRX:000660', mainColor), 1700);
+setTimeout(() => createWidget('tv-micron',  'NASDAQ:MU',  mainColor), 2000);
 </script>
 
 </body>
