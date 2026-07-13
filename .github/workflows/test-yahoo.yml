@@ -1,0 +1,14 @@
+name: Test Yahoo Finance Access
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Yahoo Finance API
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/005930.KS?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            --max-time 30 | head -c 200
