@@ -12,16 +12,48 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Fetch stock data
-        run: node scripts/fetch-data.js
+      - name: Fetch Samsung
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/005930.KS?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/samsung.json
+      - name: Fetch SK Hynix
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/000660.KS?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/hynix.json
+      - name: Fetch Micron
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/MU?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/micron.json
+      - name: Fetch KOSPI
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/kospi.json
+      - name: Fetch S&P 500
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/sp500.json
+      - name: Fetch NASDAQ
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/nasdaq.json
+      - name: Fetch Dow Jones
+        run: |
+          curl -s "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?interval=5m&range=1d" \
+            -H "User-Agent: Mozilla/5.0" > data/dow.json
+      - name: Build stocks.json
+        run: |
+          echo '{"updatedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","data":{' > data/stocks.json
+          first=true
+          for file in kospi sp500 nasdaq dow samsung hynix micron; do
+            if [ "$first" = true ]; then first=false; else echo ',' >> data/stocks.json; fi
+            echo -n '"'$file'":' >> data/stocks.json
+            cat data/$file.json >> data/stocks.json
+          done
+          echo '}}' >> data/stocks.json
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/stocks.json
+          git add data/
           git diff --cached --quiet || git commit -m "Update stock data $(date +'%Y-%m-%d %H:%M:%S')"
           git push
