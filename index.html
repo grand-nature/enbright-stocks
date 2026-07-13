@@ -171,42 +171,37 @@
 </div>
 
 <div class="footer">
-  数据仅供参考 · 30秒自动刷新 · Enbright Market Monitor
+  数据仅供参考 · 5分钟自动刷新 · Enbright Market Monitor
 </div>
 
 <button class="refresh-btn" id="refreshBtn" onclick="fetchAllData()">🔄</button>
 
 <script>
-const ALL_ORIGINS = 'https://api.allorigins.win/get?url=';
-const YAHOO_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/';
-
-const SYMBOLS = {
-  kospi:   { symbol: '^KS11', name: 'KOSPI', type: 'index' },
-  sp500:   { symbol: '^GSPC', name: 'S&P 500', type: 'index' },
-  nasdaq:  { symbol: '^IXIC', name: 'NASDAQ', type: 'index' },
-  dow:     { symbol: '^DJI', name: 'Dow Jones', type: 'index' },
-  samsung: { symbol: '005930.KS', name: 'Samsung', type: 'stock' },
-  hynix:   { symbol: '000660.KS', name: 'SK Hynix', type: 'stock' },
-  micron:  { symbol: 'MU', name: 'Micron', type: 'stock' }
+const DATA_URL = 'https://www.enbright.uk/data/stocks.json';
+const STOCK_SYMBOLS = {
+  kospi:   { name: 'KOSPI', type: 'index' },
+  sp500:   { name: 'S&P 500', type: 'index' },
+  nasdaq:  { name: 'NASDAQ', type: 'index' },
+  dow:     { name: 'Dow Jones', type: 'index' },
+  samsung: { name: 'Samsung', type: 'stock' },
+  hynix:   { name: 'SK Hynix', type: 'stock' },
+  micron:  { name: 'Micron', type: 'stock' }
 };
 
 let chartData = {};
 
-async function fetchStockData(key, { symbol }) {
+async function fetchStockData(key) {
   try {
-    const yahooUrl = `${YAHOO_URL}${encodeURIComponent(symbol)}?interval=5m&range=1d`;
-    const proxyUrl = `${ALL_ORIGINS}${encodeURIComponent(yahooUrl)}`;
-    const response = await fetch(proxyUrl, { timeout: 15000 });
-    const proxyData = await response.json();
+    const response = await fetch(DATA_URL + '?t=' + Date.now());
+    const stockData = await response.json();
     
-    if (!proxyData.contents) {
-      throw new Error('No contents from proxy');
+    if (!stockData.data || !stockData.data[key]) {
+      throw new Error('No data for ' + key);
     }
     
-    const data = JSON.parse(proxyData.contents);
-    
+    const data = stockData.data[key];
     if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
-      throw new Error('No data');
+      throw new Error('Empty chart data for ' + key);
     }
     
     const result = data.chart.result[0];
@@ -221,7 +216,7 @@ async function fetchStockData(key, { symbol }) {
     const prices = (quotes.close || []).filter(p => p !== null);
     chartData[key] = prices;
     
-    return { currentPrice, change, changePct, prices };
+    return { currentPrice, change, changePct, prices, updatedAt: stockData.updatedAt };
   } catch (e) {
     console.error(`Error fetching ${key}:`, e);
     return null;
@@ -308,19 +303,17 @@ async function fetchAllData() {
   const btn = document.getElementById('refreshBtn');
   if (btn) btn.classList.add('spinning');
   
-  const results = await Promise.all(
-    Object.entries(SYMBOLS).map(async ([key, config]) => {
-      const data = await fetchStockData(key, config);
-      return { key, data };
-    })
-  );
-  
-  results.forEach(({ key, data }) => updateCard(key, data));
-  
-  const now = new Date();
-  const updateEl = document.getElementById('lastUpdate');
-  if (updateEl) {
-    updateEl.textContent = `最后更新：${now.toLocaleString('zh-CN')}`;
+  const stockData = await fetchStockData('kospi');
+  if (stockData) {
+    Object.entries(STOCK_SYMBOLS).forEach(([key, config]) => {
+      fetchStockData(key).then(data => updateCard(key, data));
+    });
+    
+    const updateEl = document.getElementById('lastUpdate');
+    if (updateEl) {
+      const updatedAt = new Date(stockData.updatedAt);
+      updateEl.textContent = `数据更新于：${updatedAt.toLocaleString('zh-CN')}`;
+    }
   }
   
   if (btn) btn.classList.remove('spinning');
