@@ -3,384 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enbright - 全球股市实时监测</title>
+<title>Enbright - 导航</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; color: #fff; padding-bottom: 40px; }
-  .header { text-align: center; padding: 40px 20px 20px; }
-  .header h1 { font-size: 36px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-  .header p { color: #8892b0; font-size: 14px; }
-  .last-update { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 20px; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
-  .section-title { font-size: 18px; color: #00d4ff; margin: 30px 0 16px; padding-left: 8px; border-left: 3px solid #00d4ff; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-  .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-  .market-flag { font-size: 32px; margin-bottom: 8px; }
-  .market-name { font-size: 13px; color: #8892b0; text-transform: uppercase; letter-spacing: 1px; }
-  .index-name { font-size: 20px; font-weight: 600; margin: 4px 0 14px; }
-  .ticker { font-size: 12px; color: #64748b; font-family: "SF Mono", monospace; margin-top: -10px; margin-bottom: 10px; }
-  .price { font-size: 34px; font-weight: 700; font-family: "SF Mono", monospace; }
-  .price.stock-price { font-size: 30px; }
-  .change-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-  .change { font-size: 17px; font-weight: 600; font-family: "SF Mono", monospace; }
-  .change-pct { font-size: 15px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
-  .up { color: #00e676; }
-  .up-bg { background: rgba(0,230,118,0.15); color: #00e676; }
-  .down { color: #ff5252; }
-  .down-bg { background: rgba(255,82,82,0.15); color: #ff5252; }
-  .loading { color: #64748b; font-style: italic; }
-  .error { color: #ff5252; font-size: 14px; }
-  .chart-container { margin-top: 18px; height: 110px; position: relative; }
-  .mini-chart { width: 100%; height: 100%; }
-  .sector-tag { display: inline-block; background: rgba(123,44,191,0.2); color: #b388ff; padding: 2px 10px; border-radius: 10px; font-size: 11px; margin-bottom: 10px; }
-  .footer { text-align: center; padding: 30px; color: #475569; font-size: 12px; }
-  .refresh-btn { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #7b2cbf); border: none; color: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,212,255,0.3); transition: transform 0.3s; }
-  .refresh-btn:hover { transform: scale(1.1); }
-  .refresh-btn.spinning { animation: spin 1s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @media (max-width: 768px) {
-    .header h1 { font-size: 26px; }
-    .price { font-size: 26px; }
-    .price.stock-price { font-size: 24px; }
-    .card { padding: 20px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .logo {
+    font-size: 42px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #8892b0;
+    font-size: 14px;
+    margin-bottom: 50px;
+  }
+  .cards {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 800px;
+    width: 100%;
+  }
+  .card {
+    flex: 1;
+    min-width: 280px;
+    max-width: 360px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 40px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    color: #fff;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    border-color: rgba(0,212,255,0.3);
+  }
+  .card .emoji {
+    font-size: 56px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .card p {
+    color: #8892b0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .card .arrow {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 28px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.3s;
+  }
+  .card:hover .arrow {
+    opacity: 0.9;
+  }
+  .footer {
+    margin-top: 50px;
+    color: #475569;
+    font-size: 12px;
+  }
+  @media (max-width: 640px) {
+    .logo { font-size: 32px; }
+    .cards { flex-direction: column; align-items: center; }
+    .card { max-width: 100%; width: 100%; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>Enbright</h1>
-  <p>全球股市实时监测 · 韩国 & 美国 & 日本</p>
+<div class="logo">Enbright</div>
+<div class="subtitle">选择你要访问的页面</div>
+
+<div class="cards">
+  <a href="stocks.html" class="card">
+    <div class="emoji">📈</div>
+    <h2>全球股市监测</h2>
+    <p>韩国 · 日本 · 美国<br>实时股价与走势</p>
+    <div class="arrow">进入 →</div>
+  </a>
+
+  <a href="datong/index.html" class="card">
+    <div class="emoji">🚄</div>
+    <h2>大同旅行攻略</h2>
+    <p>北京 → 大同 3日游<br>云冈石窟 · 悬空寺</p>
+    <div class="arrow">进入 →</div>
+  </a>
 </div>
 
-<div class="last-update" id="lastUpdate">正在加载数据...</div>
-
-<div class="container">
-
-  <div class="section-title">📊 市场指数</div>
-  <div class="grid">
-    <div class="card">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">South Korea</div>
-      <div class="index-name">KOSPI 综合指数</div>
-      <div class="price loading" id="kospi-price">--</div>
-      <div class="change-row" id="kospi-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="kospi-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇯🇵</div>
-      <div class="market-name">Japan</div>
-      <div class="index-name">日经 225</div>
-      <div class="price loading" id="nikkei-price">--</div>
-      <div class="change-row" id="nikkei-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="nikkei-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">S&P 500</div>
-      <div class="price loading" id="sp500-price">--</div>
-      <div class="change-row" id="sp500-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="sp500-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">纳斯达克综合</div>
-      <div class="price loading" id="nasdaq-price">--</div>
-      <div class="change-row" id="nasdaq-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="nasdaq-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">United States</div>
-      <div class="index-name">道琼斯工业</div>
-      <div class="price loading" id="dow-price">--</div>
-      <div class="change-row" id="dow-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="dow-chart"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">💾 半导体 · 存储芯片</div>
-  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-    <div class="card">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">Samsung Electronics</div>
-      <div class="index-name">三星电子</div>
-      <div class="ticker">005930.KS</div>
-      <div class="sector-tag">存储芯片 · 手机 · 代工</div>
-      <div class="price stock-price loading" id="samsung-price">--</div>
-      <div class="change-row" id="samsung-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="samsung-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇰🇷</div>
-      <div class="market-name">SK Hynix</div>
-      <div class="index-name">SK 海力士</div>
-      <div class="ticker">000660.KS</div>
-      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
-      <div class="price stock-price loading" id="hynix-price">--</div>
-      <div class="change-row" id="hynix-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="hynix-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇺🇸</div>
-      <div class="market-name">Micron Technology</div>
-      <div class="index-name">美光科技</div>
-      <div class="ticker">MU</div>
-      <div class="sector-tag">存储芯片 · DRAM · NAND</div>
-      <div class="price stock-price loading" id="micron-price">--</div>
-      <div class="change-row" id="micron-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="micron-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇯🇵</div>
-      <div class="market-name">Tokyo Electron</div>
-      <div class="index-name">东京电子</div>
-      <div class="ticker">8035.T</div>
-      <div class="sector-tag">半导体设备 · 刻蚀 · 沉积</div>
-      <div class="price stock-price loading" id="tokyoelec-price">--</div>
-      <div class="change-row" id="tokyoelec-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="tokyoelec-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="market-flag">🇯🇵</div>
-      <div class="market-name">Sony Group</div>
-      <div class="index-name">索尼</div>
-      <div class="ticker">6758.T</div>
-      <div class="sector-tag">电子 · 游戏 · 半导体</div>
-      <div class="price stock-price loading" id="sony-price">--</div>
-      <div class="change-row" id="sony-change">
-        <span class="change">--</span>
-        <span class="change-pct">--</span>
-      </div>
-      <div class="chart-container">
-        <canvas class="mini-chart" id="sony-chart"></canvas>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<div class="footer">
-  数据仅供参考 · 5分钟自动刷新 · Enbright Market Monitor
-</div>
-
-<button class="refresh-btn" id="refreshBtn" onclick="fetchAllData()">🔄</button>
-
-<script>
-const DATA_URL = 'https://www.enbright.uk/data/stocks.json';
-const STOCK_SYMBOLS = {
-  kospi:     { name: 'KOSPI', type: 'index' },
-  nikkei:    { name: 'Nikkei 225', type: 'index' },
-  sp500:     { name: 'S&P 500', type: 'index' },
-  nasdaq:    { name: 'NASDAQ', type: 'index' },
-  dow:       { name: 'Dow Jones', type: 'index' },
-  samsung:   { name: 'Samsung', type: 'stock' },
-  hynix:     { name: 'SK Hynix', type: 'stock' },
-  micron:    { name: 'Micron', type: 'stock' },
-  tokyoelec: { name: 'Tokyo Electron', type: 'stock' },
-  sony:      { name: 'Sony', type: 'stock' }
-};
-
-let chartData = {};
-
-async function fetchStockData(key) {
-  try {
-    const response = await fetch(DATA_URL + '?t=' + Date.now());
-    const stockData = await response.json();
-    
-    if (!stockData.data || !stockData.data[key]) {
-      throw new Error('No data for ' + key);
-    }
-    
-    const data = stockData.data[key];
-    if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
-      throw new Error('Empty chart data for ' + key);
-    }
-    
-    const result = data.chart.result[0];
-    const meta = result.meta;
-    const quotes = result.indicators.quote[0];
-    
-    const currentPrice = meta.regularMarketPrice || meta.previousClose;
-    const prevClose = meta.chartPreviousClose || meta.previousClose;
-    const change = currentPrice - prevClose;
-    const changePct = (change / prevClose) * 100;
-    
-    const prices = (quotes.close || []).filter(p => p !== null);
-    chartData[key] = prices;
-    
-    return { currentPrice, change, changePct, prices, updatedAt: stockData.updatedAt };
-  } catch (e) {
-    console.error(`Error fetching ${key}:`, e);
-    return null;
-  }
-}
-
-function updateCard(key, data) {
-  if (!data) {
-    const priceEl = document.getElementById(`${key}-price`);
-    if (priceEl) {
-      priceEl.textContent = '数据不可用';
-      priceEl.className = priceEl.className.replace('loading', 'error');
-    }
-    return;
-  }
-  
-  const { currentPrice, change, changePct, prices } = data;
-  const isUp = change >= 0;
-  const sign = isUp ? '+' : '';
-  
-  const priceEl = document.getElementById(`${key}-price`);
-  if (priceEl) {
-    priceEl.textContent = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    priceEl.classList.remove('loading');
-  }
-  
-  const changeRow = document.getElementById(`${key}-change`);
-  if (changeRow) {
-    changeRow.innerHTML = `
-      <span class="change ${isUp ? 'up' : 'down'}">${sign}${change.toFixed(2)}</span>
-      <span class="change-pct ${isUp ? 'up-bg' : 'down-bg'}">${sign}${changePct.toFixed(2)}%</span>
-    `;
-  }
-  
-  drawChart(`${key}-chart`, prices, isUp);
-}
-
-function drawChart(canvasId, prices, isUp) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * 2;
-  canvas.height = rect.height * 2;
-  ctx.scale(2, 2);
-  
-  const w = rect.width;
-  const h = rect.height;
-  const padding = 4;
-  
-  ctx.clearRect(0, 0, w, h);
-  
-  if (!prices || prices.length < 2) return;
-  
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const range = max - min || 1;
-  
-  const color = isUp ? '#00e676' : '#ff5252';
-  
-  ctx.beginPath();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  
-  prices.forEach((price, i) => {
-    const x = (i / (prices.length - 1)) * w;
-    const y = h - padding - ((price - min) / range) * (h - padding * 2);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-  
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  const gradient = ctx.createLinearGradient(0, 0, 0, h);
-  gradient.addColorStop(0, isUp ? 'rgba(0,230,118,0.2)' : 'rgba(255,82,82,0.2)');
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fill();
-}
-
-async function fetchAllData() {
-  const btn = document.getElementById('refreshBtn');
-  if (btn) btn.classList.add('spinning');
-  
-  const stockData = await fetchStockData('kospi');
-  if (stockData) {
-    Object.entries(STOCK_SYMBOLS).forEach(([key, config]) => {
-      fetchStockData(key).then(data => updateCard(key, data));
-    });
-    
-    const updateEl = document.getElementById('lastUpdate');
-    if (updateEl) {
-      const updatedAt = new Date(stockData.updatedAt);
-      updateEl.textContent = `数据更新于：${updatedAt.toLocaleString('zh-CN')}`;
-    }
-  }
-  
-  if (btn) btn.classList.remove('spinning');
-}
-
-fetchAllData();
-setInterval(fetchAllData, 30000);
-
-window.addEventListener('resize', () => {
-  Object.entries(chartData).forEach(([key, prices]) => {
-    const changeRow = document.getElementById(`${key}-change`);
-    if (!changeRow) return;
-    const changeEl = changeRow.querySelector('.change');
-    const isUp = changeEl ? changeEl.classList.contains('up') : true;
-    drawChart(`${key}-chart`, prices, isUp);
-  });
-});
-</script>
+<div class="footer">www.enbright.uk</div>
 
 </body>
 </html>
