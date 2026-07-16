@@ -7,6 +7,39 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f5f0; color: #333; line-height: 1.7; }
+
+  /* 密码锁层 */
+  #lockScreen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #f5f5f0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.5s, visibility 0.5s;
+  }
+  #lockScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .lock-box {
+    background: #fff; border-radius: 28px; padding: 48px 40px; text-align: center;
+    max-width: 360px; width: 90%; box-shadow: 0 12px 48px rgba(0,0,0,0.1);
+  }
+  .lock-icon { font-size: 56px; margin-bottom: 16px; }
+  .lock-title { font-size: 22px; font-weight: 600; margin-bottom: 6px; color: #2c3e50; }
+  .lock-sub { color: #666; font-size: 13px; margin-bottom: 28px; }
+  .lock-input {
+    width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid #ddd;
+    background: #f8f9fa; color: #333; font-size: 16px; text-align: center;
+    outline: none; transition: border-color 0.3s; margin-bottom: 16px;
+  }
+  .lock-input:focus { border-color: #e74c3c; }
+  .lock-input::placeholder { color: #999; }
+  .lock-btn {
+    width: 100%; padding: 14px; border-radius: 14px; border: none;
+    background: #e74c3c; color: #fff; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.3s, transform 0.2s;
+  }
+  .lock-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .lock-btn:active { transform: translateY(0); }
+  .lock-error { color: #e74c3c; font-size: 13px; margin-top: 12px; min-height: 20px; }
+  .lock-hint { color: #999; font-size: 12px; margin-top: 20px; }
+
   .container { max-width: 720px; margin: 0 auto; padding: 0 16px 40px; }
   .header { background: linear-gradient(135deg, #2c3e50, #34495e); color: #fff; padding: 40px 20px; text-align: center; border-radius: 0 0 20px 20px; }
   .header h1 { font-size: 28px; margin-bottom: 8px; }
@@ -40,6 +73,19 @@
 </style>
 </head>
 <body>
+
+<!-- 密码锁 -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">此页面已加密</div>
+    <div class="lock-sub">请输入密码继续访问</div>
+    <input type="password" class="lock-input" id="lockInput" placeholder="密码" onkeydown="if(event.key==='Enter')checkLock()">
+    <button class="lock-btn" onclick="checkLock()">解锁</button>
+    <div class="lock-error" id="lockError"></div>
+    <div class="lock-hint">🔑 默认密码：enbright</div>
+  </div>
+</div>
 
 <div class="header">
   <h1>🚄 北京 → 大同 3天游玩攻略</h1>
@@ -325,6 +371,31 @@
   <button class="btn" onclick="window.print()">🖨️ 打印/保存为PDF</button>
 
 </div>
+
+<script>
+// 密码锁
+const LOCK_PASSWORD = 'enbright';
+const LOCK_STORAGE_KEY = 'enbright_unlocked';
+
+function checkLock() {
+  const input = document.getElementById('lockInput');
+  const error = document.getElementById('lockError');
+  if (input.value === LOCK_PASSWORD) {
+    sessionStorage.setItem(LOCK_STORAGE_KEY, 'true');
+    document.getElementById('lockScreen').classList.add('hidden');
+  } else {
+    error.textContent = '密码错误，请重试';
+    input.value = '';
+    input.focus();
+  }
+}
+
+if (sessionStorage.getItem(LOCK_STORAGE_KEY) === 'true') {
+  document.getElementById('lockScreen').classList.add('hidden');
+} else {
+  document.getElementById('lockScreen').classList.remove('hidden');
+}
+</script>
 
 </body>
 </html>
